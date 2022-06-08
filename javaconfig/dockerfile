@@ -1,0 +1,11 @@
+FROM maven:3.5-jdk-11 as BUILDCONFIGSERVER
+
+COPY src /usr/src/myapp/src
+COPY pom.xml /usr/src/myapp
+RUN  mvn -DskipTests -f /usr/src/myapp/pom.xml clean package
+
+FROM openjdk:11.0
+
+COPY --from=BUILDCONFIGSERVER /usr/src/myapp/target/*.jar /maven/
+
+CMD java $JAVA_OPTS -jar maven/*.jar
